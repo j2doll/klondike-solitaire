@@ -76,3 +76,5 @@ Thumbs.db
 
 # Raylib specific
 highscore.txt
+
+.vs/

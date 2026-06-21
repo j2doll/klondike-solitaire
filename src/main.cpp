@@ -1,4 +1,5 @@
 #include "Solitaire.h"
+
 #include <iostream>
 #include <raylib.h>
 
@@ -19,7 +20,9 @@ float gameScale = 1.0f;
 void UpdateDrawFrame(void) {
     if (!game) return;
 
-    gameScale = MIN((float)GetScreenWidth() / baseWindowWidth, (float)GetScreenHeight() / baseWindowHeight);
+    gameScale = MIN( 
+        float(GetScreenWidth()) / float(baseWindowWidth), 
+        float(GetScreenHeight()) / float(baseWindowHeight) );
     game->update();
     
     // Begin rendering to the game target
@@ -32,19 +35,27 @@ void UpdateDrawFrame(void) {
     BeginDrawing();
     ClearBackground(BLACK);
 
-    DrawTexturePro(gameTarget.texture, (Rectangle) { 0.0f, 0.0f, (float)gameTarget.texture.width, (float)-gameTarget.texture.height },
-        (Rectangle) {
-        (GetScreenWidth() - ((float)baseWindowWidth * gameScale)) * 0.5f, (GetScreenHeight() - ((float)baseWindowHeight * gameScale)) * 0.5f,
-            (float)baseWindowWidth * gameScale, (float)baseWindowHeight * gameScale
-    },
-        (Vector2) {
-        0, 0
-    }, 0.0f, WHITE);
+    DrawTexturePro(
+		gameTarget.texture, // texture to draw
+		Rectangle{ // source rectangle
+            0.0f, 
+            0.0f, 
+            (float)gameTarget.texture.width, 
+            (float)-gameTarget.texture.height },
+        Rectangle{ // destination rectangle
+            (GetScreenWidth() - ((float)baseWindowWidth * gameScale)) * 0.5f, 
+            (GetScreenHeight() - ((float)baseWindowHeight * gameScale)) * 0.5f, 
+            (float)baseWindowWidth * gameScale, 
+            (float)baseWindowHeight * gameScale },
+			Vector2{ 0, 0 }, // origin
+			0.0f, // rotation
+			WHITE); // color tint
 
     EndDrawing();
 }
 
 int main(void) {
+
     // Initialize window with base dimensions first
     InitWindow(baseWindowWidth, baseWindowHeight, "Solitaire");
 #ifndef EMSCRIPTEN_BUILD
@@ -69,6 +80,7 @@ int main(void) {
     try {
         game = new Solitaire();
     } catch (const std::exception& e) {
+        std::cerr << "Failed to create game: " << e.what() << std::endl;
         CloseWindow();
         return -1;
     }
